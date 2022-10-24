@@ -1,30 +1,28 @@
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
+const express = require("express");
+const app = express();
+const port = 3000;
 
-const server = http.createServer((req, res) => {
-  let filePath = path.join(
-    __dirname,
-    req.url === "/" ? "index.html" : req.url + ".html"
-  );
-  console.log("filePath: ", filePath);
+// Set view engine
+app.set('view engine', 'ejs');
 
-  fs.readFile(filePath, (error, data) => {
-    if (error) {
-      console.log(error);
-      if (error.code === "ENOENT") {
-        fs.readFile(path.join(__dirname, "404.html"), (error, data) => {
-          res.writeHead(200, { "Content-Type": "text/html" });
-          res.end(data);
-        });
-      }
-      return;
-    }
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(data);
-  });
+// Routes
+app.get("/", (req, res)  => {
+  res.render("index");
 });
 
-const PORT = process.env.PORT || 5000;
+app.get("/contact-me", (req, res)  => {
+  res.render("contact-me");
+});
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.get("/about", (req, res)  => {
+  res.render("about");
+});
+
+app.get("/error", (req, res)  => {
+  res.render("404");
+});
+
+// App listener
+app.listen(port, () => {
+  console.log(`Server running on ${port}.`);
+});
